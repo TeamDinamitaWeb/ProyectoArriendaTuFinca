@@ -1,5 +1,9 @@
 package co.edu.javeriana.tufinca.repositories;
 
-public interface UsuarioInterface {
+import org.springframework.data.repository.CrudRepository;
+
+import co.edu.javeriana.tufinca.entities.Usuario;
+
+public interface UsuarioInterface extends CrudRepository<Usuario, Long>{
 
 }
