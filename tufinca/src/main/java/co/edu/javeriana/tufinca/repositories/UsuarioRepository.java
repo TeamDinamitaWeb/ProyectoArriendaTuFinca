@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import co.edu.javeriana.tufinca.entities.Usuario;
 
-public interface UsuarioInterface extends CrudRepository<Usuario, Long>{
+public interface UsuarioRepository extends CrudRepository<Usuario, Long>{
 
 }
