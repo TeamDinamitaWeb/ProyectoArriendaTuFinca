@@ -1,18 +1,16 @@
 package co.edu.javeriana.tufinca.entities;
 
-import java.util.List;
-
+import java.io.Serializable;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,22 +23,28 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Where(clause = "status = 0")
-@SQLDelete(sql = "UPDATE Orden SET status = 1 WHERE id=?")
-public class Orden {
+@SQLDelete(sql = "UPDATE Arrendatario SET status = 1 WHERE id=?")
+public class Arrendatario extends Usuario{
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String estado;
+    private String nombre;
+    private String apellido;
+    private String contraseña;
+    private String correo;
+    private String telefono;
 
+    @OneToOne
+    @JoinColumn(name = "perfil_id")
+    private Perfil id_perfil;
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
-    private Cliente cliente;
-
-    @ManyToMany
-    @JoinTable(
-        name = "orden_producto",
-        joinColumns = @JoinColumn(name = "id_orden"),
-        inverseJoinColumns = @JoinColumn(name = "id_producto")
-    )
-    private List<Producto> productos;
+    @JoinColumn(name = "cliente_id")
+    private Cliente id_cliente;
+    @OneToOne
+    @JoinColumn(name = "propiedad_id")
+    private Propiedad id_propiedad;
 }
+
+
+
