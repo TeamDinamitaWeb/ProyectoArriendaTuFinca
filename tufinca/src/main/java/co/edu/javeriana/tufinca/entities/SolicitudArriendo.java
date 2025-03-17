@@ -47,6 +47,7 @@ public class SolicitudArriendo implements Serializable {
     private LocalDateTime fechaSolicitud;
 
     private int status = 0; // Para eliminación lógica
+    // Inicializacion en service
 
     public enum EstadoSolicitud {
         PENDIENTE, APROBADA, RECHAZADA, PAGADA, CALIFICADA, CERRADA
