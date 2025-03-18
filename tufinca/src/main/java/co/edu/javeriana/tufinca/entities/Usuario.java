@@ -27,7 +27,9 @@ public class Usuario implements Serializable {
     private String apellido;
     private String correo;
     private String contraseña;
-    
-    @Enumerated(EnumType.STRING)
-    private TipoUsuario tipoUsuario;
+    private String tipoUsuario;
+
+    @Column(columnDefinition = "TINYINT DEFAULT 0")
+    private Integer status;
+
 }
