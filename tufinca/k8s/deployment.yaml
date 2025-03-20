@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tufinca
+  namespace: 
+spec:
+  selector:
+    matchLabels:
+      app: tufinca
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tufinca
+    spec:
+      imagePullSecrets:
+        - name: github-secret
+      containers:
+        - name: tufinca
+          image: localhost:5000/tufinca:latest
+          env:
+            - name: proyectoweb
+              value: jdbc:mysql://localhost:3306/proyectoweb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tufinca
+  namespace: 
+spec:
+#  type: ClusterIP
+  selector:
+    app: tufinca
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      # nodePort: 30001  

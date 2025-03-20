@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tufinca
+  namespace: 
+spec:
+  ingressClassName: public
+  rules:
+    - host:   
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tufinca
+                port:
+                  number: 8080
+
