@@ -17,7 +17,7 @@ spec:
         - name: github-secret
       containers:
         - name: tufinca
-          image: localhost:5000/gescon-tufinca:latest
+          image: localhost:5000/tufinca:latest
           env:
             - name: proyectoweb
               value: jdbc:mysql://localhost:3306/proyectoweb
