@@ -34,11 +34,9 @@ metadata:
   name: tufinca
   namespace: 
 spec:
-  type: ClusterIP
   selector:
     app: tufinca
   ports:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-       nodePort: 30001  
