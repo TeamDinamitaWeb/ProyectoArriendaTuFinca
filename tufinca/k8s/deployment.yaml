@@ -22,7 +22,7 @@ spec:
             - name: proyectoweb
               value: jdbc:mysql://10.43.103.142:3306/proyectoweb
             - name: SPRING_DATASOURCE_USERNAME
-              value: root
+              value: palmxl
             - name: SPRING_DATASOURCE_PASSWORD
               value: password
           ports:
