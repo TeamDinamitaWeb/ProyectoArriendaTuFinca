@@ -8,4 +8,4 @@ RUN ./mvnw clean install -DskipTests
 
 CMD ["java", "-jar", "target/tufinca-0.0.1-SNAPSHOT.jar"]
 
-EXPOSE 8082
+EXPOSE 8081
