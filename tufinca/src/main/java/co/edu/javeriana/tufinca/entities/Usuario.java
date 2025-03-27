@@ -24,7 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Where(clause = "status = 0")
-@SQLDelete(sql = "UPDATE Usuario SET status = 1 WHERE id=?")
+@SQLDelete(sql = "UPDATE usuario SET status = 1 WHERE id=?")
 public class Usuario implements Serializable {
 
     @Id

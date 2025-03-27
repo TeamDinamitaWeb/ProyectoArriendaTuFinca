@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Where(clause = "status = 0")
-@SQLDelete(sql = "UPDATE Rating SET status = 1 WHERE id=?")
+@SQLDelete(sql = "UPDATE rating SET status = 1 WHERE id=?")
 public class Rating implements Serializable {
 
     @Id

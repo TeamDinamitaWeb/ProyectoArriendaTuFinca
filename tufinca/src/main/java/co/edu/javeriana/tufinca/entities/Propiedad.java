@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Where(clause = "status = 0")
-@SQLDelete(sql = "UPDATE Propiedad SET status = 1 WHERE id=?")
+@SQLDelete(sql = "UPDATE propiedad SET status = 1 WHERE id=?")
 public class Propiedad {
     
    @Id
