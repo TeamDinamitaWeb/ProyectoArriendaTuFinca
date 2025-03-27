@@ -55,6 +55,7 @@ public class Pago implements Serializable {
     @Column(nullable = false)
     private EstadoPago estado;
 
+    @Column(nullable = false)
     private Integer status = 0;
 
     public enum EstadoPago {

@@ -44,5 +44,6 @@ public class Rating implements Serializable {
     @Column(length = 500)
     private String comentarioArrendatario;
 
-    private int status = 0;
+    @Column(nullable = false)
+    private Integer status = 0;
 }

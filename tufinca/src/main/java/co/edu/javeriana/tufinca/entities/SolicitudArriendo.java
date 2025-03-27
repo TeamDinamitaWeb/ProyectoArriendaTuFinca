@@ -59,8 +59,8 @@ public class SolicitudArriendo implements Serializable {
     @Column(nullable = false)
     private LocalDateTime fechaSolicitud;
 
-    private int status = 0; // Para eliminación lógica
-    // Inicializacion en service
+    @Column(nullable = false)
+    private Integer status = 0;
 
     public enum EstadoSolicitud {
         PENDIENTE, APROBADA, RECHAZADA, PAGADA, CALIFICADA, CERRADA
