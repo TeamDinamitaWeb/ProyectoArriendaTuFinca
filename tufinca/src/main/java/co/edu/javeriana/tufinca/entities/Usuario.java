@@ -35,6 +35,6 @@ public class Usuario implements Serializable {
     private String contraseña;
     private String tipoUsuario;
 
-    @Column(columnDefinition = "TINYINT DEFAULT 0")
-    private Integer status;
+    @Column(nullable = false)
+    private Integer status = 0;
 }
