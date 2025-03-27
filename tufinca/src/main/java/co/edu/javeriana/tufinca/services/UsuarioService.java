@@ -24,7 +24,8 @@ public class UsuarioService {
                 usuario.getNombre(),
                 usuario.getApellido(),
                 usuario.getCorreo(),
-                usuario.getTipoUsuario()
+                usuario.getTipoUsuario(),
+                usuario.getStatus()
         );
     }
 
@@ -68,6 +69,17 @@ public class UsuarioService {
             usuario.setApellido(usuarioActualizado.getApellido());
             usuario.setCorreo(usuarioActualizado.getCorreo());
             usuario.setTipoUsuario(usuarioActualizado.getTipoUsuario());
+            
+            // Actualizar contraseña si se proporciona
+            if (usuarioActualizado.getContraseña() != null) {
+                usuario.setContraseña(usuarioActualizado.getContraseña());
+            }
+            
+            // Actualizar el status si se proporciona
+            if (usuarioActualizado.getStatus() != null) {
+                usuario.setStatus(usuarioActualizado.getStatus());
+            }
+            
             usuarioRepository.save(usuario);
             return convertirAUsuarioDTO(usuario);
         }

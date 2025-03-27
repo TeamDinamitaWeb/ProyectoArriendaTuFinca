@@ -1,6 +1,7 @@
 package co.edu.javeriana.tufinca.DTOS;
 
 import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class SolicitudDTO {
     private Long id;
+    private Long propiedadId;
+    private Long arrendatarioId;
     private String nombrePropiedad;
     private String nombreSolicitante;
     private LocalDateTime fechaSolicitud;
@@ -15,4 +18,6 @@ public class SolicitudDTO {
     private LocalDateTime fechaSalida;
     private double valor;
     private String estado;
+    private Integer cantidadPersonas;
+    private Integer status;
 }

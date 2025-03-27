@@ -2,6 +2,8 @@ package co.edu.javeriana.tufinca.entities;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +25,16 @@ public class Propiedad {
     
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String estado; 
+   private Long id;
+   
+   private String nombre;
+   private String descripcion;
+   private String direccion;
+   private String municipio;
+   private int capacidad;
+   private double precioPorNoche;
+   private String estado;
+   
+   @Column(columnDefinition = "TINYINT DEFAULT 0")
+   private Integer status;
 }

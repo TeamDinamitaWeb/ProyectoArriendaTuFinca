@@ -20,26 +20,28 @@ public class PropiedadService {
     private PropiedadDTO convertToDTO(Propiedad propiedad) {
         PropiedadDTO propiedadDTO = new PropiedadDTO();
         propiedadDTO.setId(propiedad.getId());
-        // Rellenar con los campos disponibles en la entidad Propiedad
-        // propiedadDTO.setNombre(propiedad.getNombre());
-        // propiedadDTO.setDescripcion(propiedad.getDescripcion());
-        // propiedadDTO.setDireccion(propiedad.getDireccion());
-        // propiedadDTO.setMunicipio(propiedad.getMunicipio());
-        // propiedadDTO.setCapacidad(propiedad.getCapacidad());
-        // propiedadDTO.setPrecioPorNoche(propiedad.getPrecioPorNoche());
+        propiedadDTO.setNombre(propiedad.getNombre());
+        propiedadDTO.setDescripcion(propiedad.getDescripcion());
+        propiedadDTO.setDireccion(propiedad.getDireccion());
+        propiedadDTO.setMunicipio(propiedad.getMunicipio());
+        propiedadDTO.setCapacidad(propiedad.getCapacidad());
+        propiedadDTO.setPrecioPorNoche(propiedad.getPrecioPorNoche());
+        propiedadDTO.setEstado(propiedad.getEstado());
+        propiedadDTO.setStatus(propiedad.getStatus());
         return propiedadDTO;
     }
 
     private Propiedad convertToEntity(PropiedadDTO propiedadDTO) {
         Propiedad propiedad = new Propiedad();
         propiedad.setId(propiedadDTO.getId());
-        // Rellenar con los campos disponibles en el DTO
-        // propiedad.setNombre(propiedadDTO.getNombre());
-        // propiedad.setDescripcion(propiedadDTO.getDescripcion());
-        // propiedad.setDireccion(propiedadDTO.getDireccion());
-        // propiedad.setMunicipio(propiedadDTO.getMunicipio());
-        // propiedad.setCapacidad(propiedadDTO.getCapacidad());
-        // propiedad.setPrecioPorNoche(propiedadDTO.getPrecioPorNoche());
+        propiedad.setNombre(propiedadDTO.getNombre());
+        propiedad.setDescripcion(propiedadDTO.getDescripcion());
+        propiedad.setDireccion(propiedadDTO.getDireccion());
+        propiedad.setMunicipio(propiedadDTO.getMunicipio());
+        propiedad.setCapacidad(propiedadDTO.getCapacidad());
+        propiedad.setPrecioPorNoche(propiedadDTO.getPrecioPorNoche());
+        propiedad.setEstado(propiedadDTO.getEstado());
+        propiedad.setStatus(propiedadDTO.getStatus() != null ? propiedadDTO.getStatus() : 0);
         return propiedad;
     }
 
@@ -71,10 +73,16 @@ public class PropiedadService {
     }
 
     public PropiedadDTO actualizarPropiedad(Long id, PropiedadDTO propiedadDTO) {
-        if (propiedadRepository.existsById(id)) {
-            Propiedad propiedad = convertToEntity(propiedadDTO);
-            propiedad.setId(id);
-            return convertToDTO(propiedadRepository.save(propiedad));
+        Optional<Propiedad> propiedadExistente = propiedadRepository.findById(id);
+        
+        if (propiedadExistente.isPresent()) {
+            try {
+                Propiedad propiedad = convertToEntity(propiedadDTO);
+                propiedad.setId(id);
+                return convertToDTO(propiedadRepository.save(propiedad));
+            } catch (Exception e) {
+                throw new RuntimeException("Error al actualizar la propiedad: " + e.getMessage());
+            }
         }
         return null;
     }

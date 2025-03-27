@@ -15,4 +15,5 @@ public class UsuarioDTOs {
     private String apellido;
     private String correo;
     private String tipoUsuario;
+    private Integer status;
 }
