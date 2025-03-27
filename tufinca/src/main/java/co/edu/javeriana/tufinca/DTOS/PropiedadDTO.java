@@ -13,4 +13,6 @@ public class PropiedadDTO {
     private String municipio;
     private int capacidad;
     private double precioPorNoche;
+    private String estado;
+    private Integer status;
 }
