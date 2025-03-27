@@ -1,13 +1,15 @@
 package co.edu.javeriana.tufinca.services;
 
-import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
-import co.edu.javeriana.tufinca.entities.Usuario;
-import co.edu.javeriana.tufinca.repositories.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
+import co.edu.javeriana.tufinca.entities.Usuario;
+import co.edu.javeriana.tufinca.repositories.UsuarioRepository;
 
 @Service
 public class UsuarioService {
@@ -22,14 +24,27 @@ public class UsuarioService {
                 usuario.getNombre(),
                 usuario.getApellido(),
                 usuario.getCorreo(),
-                usuario.getTipoUsuario()
+                usuario.getTipoUsuario(),
+                usuario.getStatus()
         );
     }
 
     // Obtener todos los usuarios
     public List<UsuarioDTOs> obtenerTodos() {
         List<Usuario> usuarios = usuarioRepository.findAll();
-        return usuarios.stream().map(this::convertirAUsuarioDTO).collect(Collectors.toList());
+        System.out.println("Usuarios obtenidos: " + usuarios.size());
+        return usuarios.stream()
+                       .map(this::convertirAUsuarioDTO)
+                       .collect(Collectors.toList());
+    }
+    
+    // Obtener todos los usuarios incluyendo eliminados
+    public List<UsuarioDTOs> obtenerTodosInclusoEliminados() {
+        List<Usuario> usuarios = usuarioRepository.findAllIncludingDeleted();
+        System.out.println("Todos los usuarios (incluidos eliminados): " + usuarios.size());
+        return usuarios.stream()
+                       .map(this::convertirAUsuarioDTO)
+                       .collect(Collectors.toList());
     }
 
     // Obtener usuario por ID
@@ -54,6 +69,17 @@ public class UsuarioService {
             usuario.setApellido(usuarioActualizado.getApellido());
             usuario.setCorreo(usuarioActualizado.getCorreo());
             usuario.setTipoUsuario(usuarioActualizado.getTipoUsuario());
+            
+            // Actualizar contraseña si se proporciona
+            if (usuarioActualizado.getContraseña() != null) {
+                usuario.setContraseña(usuarioActualizado.getContraseña());
+            }
+            
+            // Actualizar el status si se proporciona
+            if (usuarioActualizado.getStatus() != null) {
+                usuario.setStatus(usuarioActualizado.getStatus());
+            }
+            
             usuarioRepository.save(usuario);
             return convertirAUsuarioDTO(usuario);
         }

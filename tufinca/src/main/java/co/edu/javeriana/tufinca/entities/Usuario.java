@@ -1,9 +1,15 @@
 package co.edu.javeriana.tufinca.entities;
 
 import java.io.Serializable;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +33,8 @@ public class Usuario implements Serializable {
     private String apellido;
     private String correo;
     private String contraseña;
-    
-    @Enumerated(EnumType.STRING)
-    private TipoUsuario tipoUsuario;
+    private String tipoUsuario;
+
+    @Column(columnDefinition = "TINYINT DEFAULT 0")
+    private Integer status;
 }
