@@ -2,12 +2,11 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tufinca
-  namespace: 
+  namespace: default
 spec:
   ingressClassName: public
   rules:
-#    - host: localhost
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
