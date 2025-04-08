@@ -6,7 +6,8 @@ metadata:
 spec:
   ingressClassName: public
   rules:
-    - http:
+    - host: 
+      http:
         paths:
           - path: /
             pathType: Prefix
