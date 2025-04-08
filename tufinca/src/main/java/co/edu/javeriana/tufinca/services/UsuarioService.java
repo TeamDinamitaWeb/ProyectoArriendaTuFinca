@@ -75,7 +75,7 @@ public class UsuarioService {
                 usuario.setContrasena(usuarioActualizado.getContrasena());
             }
             
-            // Actualizar el status si se proporciona
+            // Actualizar el status si se proporciona.
             if (usuarioActualizado.getStatus() != null) {
                 usuario.setStatus(usuarioActualizado.getStatus());
             }
