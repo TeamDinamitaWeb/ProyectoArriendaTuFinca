@@ -71,8 +71,8 @@ public class UsuarioService {
             usuario.setTipoUsuario(usuarioActualizado.getTipoUsuario());
             
             // Actualizar contraseña si se proporciona
-            if (usuarioActualizado.getContraseña() != null) {
-                usuario.setContraseña(usuarioActualizado.getContraseña());
+            if (usuarioActualizado.getContrasena() != null) {
+                usuario.setContrasena(usuarioActualizado.getContrasena());
             }
             
             // Actualizar el status si se proporciona
