@@ -3,7 +3,9 @@ package co.edu.javeriana.tufinca.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,5 +58,20 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
         return usuarioService.eliminarUsuario(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    // JWT
+    @CrossOrigin
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public UsuarioDTOs usuario(Authentication authentication) throws Exception{
+        System.out.println( authentication.getName() );
+        return usuarioService.autorizacion(authentication);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/error", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UsuarioDTOs error(Authentication authentication) throws Exception{
+        System.out.println(authentication);
+        return usuarioService.autorizacion(authentication);
     }
 }

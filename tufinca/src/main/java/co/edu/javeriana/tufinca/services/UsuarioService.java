@@ -4,8 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.security.core.Authentication;
+
 
 import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
 import co.edu.javeriana.tufinca.entities.Usuario;
@@ -16,6 +21,19 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    // JWT
+    public UsuarioDTOs autorizacion( Authentication authentication ) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("-----------------------");
+        System.out.println(  authentication.getName() );
+        UsuarioDTOs usuario = objectMapper.readValue(authentication.getName(), UsuarioDTOs.class);
+        System.out.println("-----------------------"); 
+        return usuario;
+    }
 
     // Convertir Usuario a UsuarioDTO
     private UsuarioDTOs convertirAUsuarioDTO(Usuario usuario) {
