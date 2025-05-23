@@ -20,7 +20,7 @@ import co.edu.javeriana.tufinca.DTOS.SolicitudDTO;
 import co.edu.javeriana.tufinca.services.SolicitudService;
 
 @RestController
-@RequestMapping("/solicitudes")
+@RequestMapping("/api/solicitudes")
 @CrossOrigin(origins = "*")
 public class SolicitudController {
 

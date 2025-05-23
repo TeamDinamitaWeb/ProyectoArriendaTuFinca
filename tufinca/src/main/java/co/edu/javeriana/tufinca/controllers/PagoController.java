@@ -20,7 +20,7 @@ import co.edu.javeriana.tufinca.DTOS.PagoDTO;
 import co.edu.javeriana.tufinca.services.PagoService;
 
 @RestController
-@RequestMapping("/pagos")
+@RequestMapping("/api/pagos")
 @CrossOrigin(origins = "*")
 public class PagoController {
 

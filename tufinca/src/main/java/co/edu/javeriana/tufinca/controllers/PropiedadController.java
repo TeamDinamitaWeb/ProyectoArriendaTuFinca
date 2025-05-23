@@ -18,7 +18,7 @@ import co.edu.javeriana.tufinca.DTOS.PropiedadDTO;
 import co.edu.javeriana.tufinca.services.PropiedadService;
 
 @RestController
-@RequestMapping("/propiedades")
+@RequestMapping("/api/propiedades")
 @CrossOrigin(origins = "*")
 public class PropiedadController {
 

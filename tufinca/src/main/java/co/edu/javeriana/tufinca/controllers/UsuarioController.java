@@ -21,7 +21,7 @@ import co.edu.javeriana.tufinca.entities.Usuario;
 import co.edu.javeriana.tufinca.services.UsuarioService;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/api/usuarios")
 @CrossOrigin(origins = "*")
 public class UsuarioController {
 

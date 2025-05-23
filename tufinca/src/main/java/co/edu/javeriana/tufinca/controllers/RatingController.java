@@ -18,7 +18,7 @@ import co.edu.javeriana.tufinca.DTOS.RatingDTO;
 import co.edu.javeriana.tufinca.services.RatingService;
 
 @RestController
-@RequestMapping("/ratings")
+@RequestMapping("/api/ratings")
 @CrossOrigin(origins = "*")
 public class RatingController {
 
