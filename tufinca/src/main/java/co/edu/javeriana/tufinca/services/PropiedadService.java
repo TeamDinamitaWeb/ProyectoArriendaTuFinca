@@ -9,13 +9,19 @@ import org.springframework.stereotype.Service;
 
 import co.edu.javeriana.tufinca.DTOS.PropiedadDTO;
 import co.edu.javeriana.tufinca.entities.Propiedad;
+import co.edu.javeriana.tufinca.entities.Usuario;
 import co.edu.javeriana.tufinca.repositories.PropiedadRepository;
+import co.edu.javeriana.tufinca.repositories.UsuarioRepository;
 
 @Service
 public class PropiedadService {
 
     @Autowired
     private PropiedadRepository propiedadRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
 
     private PropiedadDTO convertToDTO(Propiedad propiedad) {
         PropiedadDTO propiedadDTO = new PropiedadDTO();
@@ -28,6 +34,7 @@ public class PropiedadService {
         propiedadDTO.setPrecioPorNoche(propiedad.getPrecioPorNoche());
         propiedadDTO.setEstado(propiedad.getEstado());
         propiedadDTO.setStatus(propiedad.getStatus());
+        propiedadDTO.setUsuarioId(propiedad.getUsuario().getId());
         return propiedadDTO;
     }
 
@@ -42,7 +49,19 @@ public class PropiedadService {
         propiedad.setPrecioPorNoche(propiedadDTO.getPrecioPorNoche());
         propiedad.setEstado(propiedadDTO.getEstado());
         propiedad.setStatus(propiedadDTO.getStatus() != null ? propiedadDTO.getStatus() : 0);
-        return propiedad;
+
+        // 👇 Asignar usuario (arrendador)
+        if (propiedadDTO.getUsuarioId() != null) {
+            Optional<Usuario> usuario = usuarioRepository.findById(propiedadDTO.getUsuarioId());
+            if (usuario.isPresent()) {
+                propiedad.setUsuario(usuario.get());
+            } else {
+                throw new IllegalArgumentException("Usuario (arrendador) con ID " + propiedadDTO.getUsuarioId() + " no existe");
+            }
+        } else {
+            throw new IllegalArgumentException("Debe indicar el ID del arrendador (usuario)");
+        }
+            return propiedad;
     }
 
     public List<PropiedadDTO> obtenerTodos() {
@@ -76,16 +95,31 @@ public class PropiedadService {
         Optional<Propiedad> propiedadExistente = propiedadRepository.findById(id);
         
         if (propiedadExistente.isPresent()) {
-            try {
-                Propiedad propiedad = convertToEntity(propiedadDTO);
-                propiedad.setId(id);
-                return convertToDTO(propiedadRepository.save(propiedad));
-            } catch (Exception e) {
-                throw new RuntimeException("Error al actualizar la propiedad: " + e.getMessage());
+            Propiedad propiedad = propiedadExistente.get();
+
+            // Solo actualizamos los campos individuales
+            propiedad.setTitulo(propiedadDTO.getTitulo());
+            propiedad.setDescripcion(propiedadDTO.getDescripcion());
+            propiedad.setDireccion(propiedadDTO.getDireccion());
+            propiedad.setMunicipio(propiedadDTO.getMunicipio());
+            propiedad.setCapacidad(propiedadDTO.getCapacidad());
+            propiedad.setPrecioPorNoche(propiedadDTO.getPrecioPorNoche());
+            propiedad.setEstado(propiedadDTO.getEstado());
+            propiedad.setStatus(propiedadDTO.getStatus() != null ? propiedadDTO.getStatus() : propiedad.getStatus());
+
+            // Si llega un nuevo usuarioId, lo actualizamos
+            if (propiedadDTO.getUsuarioId() != null) {
+                Usuario nuevoUsuario = usuarioRepository.findById(propiedadDTO.getUsuarioId())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                propiedad.setUsuario(nuevoUsuario);
             }
+
+            return convertToDTO(propiedadRepository.save(propiedad));
         }
+
         return null;
     }
+
 
     public boolean eliminarPropiedad(Long id) {
         if (propiedadRepository.existsById(id)) {

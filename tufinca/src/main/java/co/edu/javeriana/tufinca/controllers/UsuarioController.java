@@ -3,18 +3,11 @@ package co.edu.javeriana.tufinca.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
 import co.edu.javeriana.tufinca.entities.Usuario;
@@ -44,9 +37,14 @@ public class UsuarioController {
         return usuario != null ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping
-    public ResponseEntity<UsuarioDTOs> crearUsuario(@RequestBody Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.crearUsuario(usuario));
+    @PostMapping("/crear")
+    public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuario) {
+        try {
+            UsuarioDTOs creado = usuarioService.crearUsuario(usuario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear el usuario: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
@@ -61,17 +59,13 @@ public class UsuarioController {
     }
 
     // JWT
-    @CrossOrigin
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public UsuarioDTOs usuario(Authentication authentication) throws Exception{
-        System.out.println( authentication.getName() );
+    @PostMapping(value = "/jwt-decode", produces = MediaType.APPLICATION_JSON_VALUE)
+    public UsuarioDTOs usuarioDesdeToken(Authentication authentication) throws Exception {
         return usuarioService.autorizacion(authentication);
     }
 
-    @CrossOrigin
     @GetMapping(value = "/error", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UsuarioDTOs error(Authentication authentication) throws Exception{
-        System.out.println(authentication);
+    public UsuarioDTOs error(Authentication authentication) throws Exception {
         return usuarioService.autorizacion(authentication);
     }
 }

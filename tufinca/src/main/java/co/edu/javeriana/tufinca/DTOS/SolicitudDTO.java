@@ -3,10 +3,7 @@ package co.edu.javeriana.tufinca.DTOS;
 import java.time.LocalDateTime;
 
 import co.edu.javeriana.tufinca.entities.SolicitudArriendo.EstadoSolicitud;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter

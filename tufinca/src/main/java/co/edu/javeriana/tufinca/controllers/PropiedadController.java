@@ -3,16 +3,9 @@ package co.edu.javeriana.tufinca.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import co.edu.javeriana.tufinca.DTOS.PropiedadDTO;
 import co.edu.javeriana.tufinca.services.PropiedadService;
@@ -42,18 +35,43 @@ public class PropiedadController {
     }
 
     @PostMapping
-    public ResponseEntity<PropiedadDTO> crearPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
-        return ResponseEntity.ok(propiedadService.crearPropiedad(propiedadDTO));
+    public ResponseEntity<?> crearPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
+        try {
+            PropiedadDTO creada = propiedadService.crearPropiedad(propiedadDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Datos inválidos: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al crear propiedad: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PropiedadDTO> actualizarPropiedad(@PathVariable Long id, @RequestBody PropiedadDTO propiedadDTO) {
-        PropiedadDTO propiedadActualizada = propiedadService.actualizarPropiedad(id, propiedadDTO);
-        return propiedadActualizada != null ? ResponseEntity.ok(propiedadActualizada) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> actualizarPropiedad(@PathVariable Long id, @RequestBody PropiedadDTO propiedadDTO) {
+        try {
+            PropiedadDTO actualizada = propiedadService.actualizarPropiedad(id, propiedadDTO);
+            return actualizada != null
+                    ? ResponseEntity.ok(actualizada)
+                    : ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Datos inválidos: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar propiedad: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPropiedad(@PathVariable Long id) {
-        return propiedadService.eliminarPropiedad(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        return propiedadService.eliminarPropiedad(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error inesperado: " + e.getMessage());
     }
 } 

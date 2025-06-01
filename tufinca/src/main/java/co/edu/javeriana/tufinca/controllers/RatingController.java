@@ -4,15 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import co.edu.javeriana.tufinca.DTOS.RatingDTO;
 import co.edu.javeriana.tufinca.services.RatingService;
@@ -42,19 +35,42 @@ public class RatingController {
     }
 
     @PostMapping
-    public ResponseEntity<RatingDTO> crearRating(@RequestBody RatingDTO ratingDTO) {
-        return ResponseEntity.ok(ratingService.crearRating(ratingDTO));
+    public ResponseEntity<?> crearRating(@RequestBody RatingDTO ratingDTO) {
+        try {
+            RatingDTO creada = ratingService.crearRating(ratingDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Error en datos de entrada: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al crear calificación: " + e.getMessage());
+        }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<RatingDTO> actualizarRating(@PathVariable Long id, @RequestBody RatingDTO ratingDTO) {
-        RatingDTO ratingActualizado = ratingService.actualizarRating(id, ratingDTO);
-        return ratingActualizado != null ? ResponseEntity.ok(ratingActualizado) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> actualizarRating(@PathVariable Long id, @RequestBody RatingDTO ratingDTO) {
+        try {
+            RatingDTO actualizada = ratingService.actualizarRating(id, ratingDTO);
+            return actualizada != null
+                    ? ResponseEntity.ok(actualizada)
+                    : ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Error en datos de entrada: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al actualizar calificación: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarRating(@PathVariable Long id) {
         ratingService.eliminarRating(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error inesperado: " + e.getMessage());
     }
 }

@@ -1,10 +1,7 @@
 package co.edu.javeriana.tufinca.DTOS;
 
 import co.edu.javeriana.tufinca.entities.Propiedad.EstadoPropiedad;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -19,5 +16,6 @@ public class PropiedadDTO {
     private int capacidad;
     private double precioPorNoche;
     private EstadoPropiedad estado;
+    private Long usuarioId;
     private Integer status;
 }
