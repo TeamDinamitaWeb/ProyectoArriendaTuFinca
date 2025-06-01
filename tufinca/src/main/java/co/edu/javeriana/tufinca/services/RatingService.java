@@ -49,8 +49,8 @@ public class RatingService {
             ratingDTO.setNombrePropiedad("Propiedad " + rating.getSolicitud().getPropiedad().getId());
         }
         
-        ratingDTO.setCalificacion(rating.getCalificacionFinca());
-        ratingDTO.setComentario(rating.getComentarioFinca());
+        ratingDTO.setCalificacionFinca(rating.getCalificacionFinca());
+        ratingDTO.setComentarioFinca(rating.getComentarioFinca());
         ratingDTO.setCalificacionArrendatario(rating.getCalificacionArrendatario());
         ratingDTO.setComentarioArrendatario(rating.getComentarioArrendatario());
         ratingDTO.setStatus(rating.getStatus());
@@ -93,8 +93,8 @@ public class RatingService {
         }
         
         // Establecer calificaciones y comentarios
-        rating.setCalificacionFinca(ratingDTO.getCalificacion());
-        rating.setComentarioFinca(ratingDTO.getComentario());
+        rating.setCalificacionFinca(ratingDTO.getCalificacionFinca());
+        rating.setComentarioFinca(ratingDTO.getComentarioFinca());
         
         // Establecer calificación y comentario del arrendatario si están disponibles
         if (ratingDTO.getCalificacionArrendatario() != null) {

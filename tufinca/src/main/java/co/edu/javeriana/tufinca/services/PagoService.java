@@ -1,5 +1,6 @@
 package co.edu.javeriana.tufinca.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +28,11 @@ public class PagoService {
     private PagoDTO convertToDTO(Pago pago) {
         PagoDTO pagoDTO = new PagoDTO();
         pagoDTO.setId(pago.getId());
-        pagoDTO.setValor(pago.getValor().doubleValue());
+        pagoDTO.setValor(pago.getValor());
         pagoDTO.setBanco(pago.getBanco());
         pagoDTO.setNumeroCuenta(pago.getNumeroCuenta());
         pagoDTO.setFechaPago(pago.getFechaPago());
-        pagoDTO.setEstado(pago.getEstado().toString());
+        pagoDTO.setEstado(pago.getEstado());
         pagoDTO.setStatus(pago.getStatus());
         
         // Agregar ID de solicitud si está disponible
@@ -60,10 +61,10 @@ public class PagoService {
         }
         
         // Validar y establecer valor
-        if (pagoDTO.getValor() <= 0) {
+        if (pagoDTO.getValor().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El valor del pago debe ser mayor que cero");
         }
-        pago.setValor(java.math.BigDecimal.valueOf(pagoDTO.getValor()));
+        pago.setValor((pagoDTO.getValor()));
         
         // Validar banco
         if (pagoDTO.getBanco() == null || pagoDTO.getBanco().trim().isEmpty()) {
@@ -85,16 +86,12 @@ public class PagoService {
         }
         
         // Manejo de enum: si no hay estado o es inválido, usar el valor por defecto
-        try {
-            if (pagoDTO.getEstado() != null && !pagoDTO.getEstado().isEmpty()) {
-                pago.setEstado(Pago.EstadoPago.valueOf(pagoDTO.getEstado()));
-            } else {
-                pago.setEstado(Pago.EstadoPago.PENDIENTE);
-            }
-        } catch (Exception e) {
-            pago.setEstado(Pago.EstadoPago.PENDIENTE); // Valor por defecto
+        if (pagoDTO.getEstado() != null) {
+            pago.setEstado(pagoDTO.getEstado());
+        } else {
+            pago.setEstado(Pago.EstadoPago.PENDIENTE);
         }
-        
+
         // Establecer status para borrado lógico (0 por defecto)
         pago.setStatus(pagoDTO.getStatus() != null ? pagoDTO.getStatus() : 0);
         

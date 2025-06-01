@@ -2,6 +2,7 @@ package co.edu.javeriana.tufinca.DTOS;
 
 import java.time.LocalDateTime;
 
+import co.edu.javeriana.tufinca.entities.SolicitudArriendo.EstadoSolicitud;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +19,10 @@ public class SolicitudDTO {
     private String nombrePropiedad;
     private String nombreSolicitante;
     private LocalDateTime fechaSolicitud;
-    private LocalDateTime fechaLlegada;
-    private LocalDateTime fechaSalida;
+    private LocalDateTime fechaInicio;
+    private LocalDateTime fechaFin;
     private double valor;
-    private String estado;
+    private EstadoSolicitud estado;
     private Integer cantidadPersonas;
     private Integer status;
 }

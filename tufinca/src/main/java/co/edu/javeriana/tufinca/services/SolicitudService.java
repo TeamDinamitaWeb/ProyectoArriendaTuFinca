@@ -44,12 +44,12 @@ public class SolicitudService {
         }
         
         solicitudDTO.setFechaSolicitud(solicitud.getFechaSolicitud());
-        solicitudDTO.setFechaLlegada(LocalDateTime.from(solicitud.getFechaInicio().atStartOfDay()));
-        solicitudDTO.setFechaSalida(LocalDateTime.from(solicitud.getFechaFin().atStartOfDay()));
+        solicitudDTO.setFechaInicio(LocalDateTime.from(solicitud.getFechaInicio().atStartOfDay()));
+        solicitudDTO.setFechaFin(LocalDateTime.from(solicitud.getFechaFin().atStartOfDay()));
         solicitudDTO.setCantidadPersonas(solicitud.getCantidadPersonas());
         // Aquí se necesitaría calcular el valor basado en la propiedad o alguna lógica de negocio
         solicitudDTO.setValor(0.0); // Este valor debería calcularse según la lógica del negocio
-        solicitudDTO.setEstado(solicitud.getEstado().toString());
+        solicitudDTO.setEstado(solicitud.getEstado());
         solicitudDTO.setStatus(solicitud.getStatus());
         return solicitudDTO;
     }
@@ -84,14 +84,14 @@ public class SolicitudService {
         
         try {
             // Establecer fechas
-            if (solicitudDTO.getFechaLlegada() != null) {
-                solicitud.setFechaInicio(solicitudDTO.getFechaLlegada().toLocalDate());
+            if (solicitudDTO.getFechaInicio() != null) {
+                solicitud.setFechaInicio(solicitudDTO.getFechaInicio().toLocalDate());
             } else {
                 throw new IllegalArgumentException("La fecha de llegada es obligatoria");
             }
             
-            if (solicitudDTO.getFechaSalida() != null) {
-                solicitud.setFechaFin(solicitudDTO.getFechaSalida().toLocalDate());
+            if (solicitudDTO.getFechaFin() != null) {
+                solicitud.setFechaFin(solicitudDTO.getFechaFin().toLocalDate());
             } else {
                 throw new IllegalArgumentException("La fecha de salida es obligatoria");
             }
@@ -112,8 +112,8 @@ public class SolicitudService {
         
         // Establecer estado de la solicitud (PENDIENTE por defecto)
         try {
-            if (solicitudDTO.getEstado() != null && !solicitudDTO.getEstado().isEmpty()) {
-                solicitud.setEstado(SolicitudArriendo.EstadoSolicitud.valueOf(solicitudDTO.getEstado()));
+            if (solicitudDTO.getEstado() != null) {
+                solicitud.setEstado((solicitudDTO.getEstado()));
             } else {
                 solicitud.setEstado(SolicitudArriendo.EstadoSolicitud.PENDIENTE);
             }

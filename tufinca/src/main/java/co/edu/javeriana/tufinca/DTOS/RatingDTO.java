@@ -16,8 +16,8 @@ public class RatingDTO {
     private Long arrendatarioId;
     private String nombreUsuario;
     private String nombrePropiedad;
-    private int calificacion;
-    private String comentario;
+    private int calificacionFinca;
+    private String comentarioFinca;
     private Integer calificacionArrendatario;
     private String comentarioArrendatario;
     private Integer status;

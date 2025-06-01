@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.Authentication;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
 import co.edu.javeriana.tufinca.entities.Usuario;
@@ -21,6 +21,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     ModelMapper modelMapper;
@@ -73,9 +76,14 @@ public class UsuarioService {
 
     // Crear usuario
     public UsuarioDTOs crearUsuario(Usuario usuario) {
-        Usuario nuevoUsuario = usuarioRepository.save(usuario);
-        return convertirAUsuarioDTO(nuevoUsuario);
+    if (usuario.getContrasena() != null) {
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
     }
+
+    Usuario nuevoUsuario = usuarioRepository.save(usuario);
+    return convertirAUsuarioDTO(nuevoUsuario);
+    }
+
 
     // Actualizar usuario
     public UsuarioDTOs actualizarUsuario(Long id, Usuario usuarioActualizado) {
@@ -83,25 +91,28 @@ public class UsuarioService {
 
         if (usuarioExistente.isPresent()) {
             Usuario usuario = usuarioExistente.get();
+
             usuario.setNombre(usuarioActualizado.getNombre());
             usuario.setApellido(usuarioActualizado.getApellido());
             usuario.setCorreo(usuarioActualizado.getCorreo());
             usuario.setTipoUsuario(usuarioActualizado.getTipoUsuario());
-            
-            // Actualizar contraseña si se proporciona
-            if (usuarioActualizado.getContrasena() != null) {
-                usuario.setContrasena(usuarioActualizado.getContrasena());
+
+            // Cifrar la nueva contraseña solo si se proporciona
+            if (usuarioActualizado.getContrasena() != null && !usuarioActualizado.getContrasena().isBlank()) {
+                usuario.setContrasena(passwordEncoder.encode(usuarioActualizado.getContrasena()));
             }
-            
-            // Actualizar el status si se proporciona.
+
+            // Actualizar status si se proporciona
             if (usuarioActualizado.getStatus() != null) {
                 usuario.setStatus(usuarioActualizado.getStatus());
             }
-            
+
             usuarioRepository.save(usuario);
             return convertirAUsuarioDTO(usuario);
         }
+
         return null;
+    
     }
 
     // Eliminar usuario (borrado lógico)
