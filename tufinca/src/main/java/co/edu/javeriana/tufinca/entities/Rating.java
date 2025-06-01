@@ -41,7 +41,6 @@ public class Rating implements Serializable {
     @JoinColumn(name = "usuario_id") 
     private Usuario usuario;
 
-
     @ManyToOne
     @JoinColumn(name = "propiedad_id")
     private Propiedad propiedad;
