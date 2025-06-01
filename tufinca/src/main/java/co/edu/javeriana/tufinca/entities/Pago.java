@@ -32,6 +32,11 @@ public class Pago implements Serializable {
     @JoinColumn(name = "solicitud_id", nullable = false)
     private SolicitudArriendo solicitud;
 
+    @ManyToOne
+    @JoinColumn(name = "propiedad_id", nullable = false)
+    private Propiedad propiedad;
+
+
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal valor;
 
