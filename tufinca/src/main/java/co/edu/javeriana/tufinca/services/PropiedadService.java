@@ -20,7 +20,7 @@ public class PropiedadService {
     private PropiedadDTO convertToDTO(Propiedad propiedad) {
         PropiedadDTO propiedadDTO = new PropiedadDTO();
         propiedadDTO.setId(propiedad.getId());
-        propiedadDTO.setNombre(propiedad.getNombre());
+        propiedadDTO.setTitulo(propiedad.getTitulo());
         propiedadDTO.setDescripcion(propiedad.getDescripcion());
         propiedadDTO.setDireccion(propiedad.getDireccion());
         propiedadDTO.setMunicipio(propiedad.getMunicipio());
@@ -34,7 +34,7 @@ public class PropiedadService {
     private Propiedad convertToEntity(PropiedadDTO propiedadDTO) {
         Propiedad propiedad = new Propiedad();
         propiedad.setId(propiedadDTO.getId());
-        propiedad.setNombre(propiedadDTO.getNombre());
+        propiedad.setTitulo(propiedadDTO.getTitulo());
         propiedad.setDescripcion(propiedadDTO.getDescripcion());
         propiedad.setDireccion(propiedadDTO.getDireccion());
         propiedad.setMunicipio(propiedadDTO.getMunicipio());

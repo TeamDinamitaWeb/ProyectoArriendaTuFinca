@@ -3,32 +3,37 @@ package co.edu.javeriana.tufinca.entities;
 import java.io.Serializable;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 @SuppressWarnings("deprecation")
 @Entity
+@Table(name = "ratings")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Where(clause = "status = 0")
-@SQLDelete(sql = "UPDATE rating SET status = 1 WHERE id=?")
+@SQLDelete(sql = "UPDATE ratings SET status = 1 WHERE id=?")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Rating implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "solicitud_id", nullable = false)
     private SolicitudArriendo solicitud;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "arrendador_id", nullable = false)
     private Usuario arrendador;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "arrendatario_id", nullable = false)
     private Usuario arrendatario;
 
