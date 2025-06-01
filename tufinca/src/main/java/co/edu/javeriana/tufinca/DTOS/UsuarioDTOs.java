@@ -1,5 +1,6 @@
 package co.edu.javeriana.tufinca.DTOS;
 
+import co.edu.javeriana.tufinca.entities.Usuario.TipoUsuario;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,6 @@ public class UsuarioDTOs {
     private String nombre;
     private String apellido;
     private String correo;
-    private String tipoUsuario;
+    private TipoUsuario tipoUsuario;
     private Integer status;
 }
