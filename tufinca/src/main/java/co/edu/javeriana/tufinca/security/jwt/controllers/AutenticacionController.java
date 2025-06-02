@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -45,6 +44,18 @@ public class AutenticacionController {
 
         Usuario usuario = usuarioRepository.findByCorreo(loginDTO.getCorreo())
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        System.out.println("Correo recibido: " + loginDTO.getCorreo());
+        System.out.println("Contraseña sin cifrar (input): " + loginDTO.getContrasena());
+
+
+        usuario = usuarioRepository.findByCorreo(loginDTO.getCorreo())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+
+        System.out.println("Contraseña cifrada (BD): " + usuario.getContrasena());
+        System.out.println("¿Coinciden?: " + passwordEncoder.matches(loginDTO.getContrasena(), usuario.getContrasena()));
+
 
         if (!passwordEncoder.matches(loginDTO.getContrasena(), usuario.getContrasena())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
