@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 //import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -40,10 +41,12 @@ public class SecurityConfig implements ISecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable()) // más directo para pruebas
+        http
+            .cors(Customizer.withDefaults()) // 🔥 ¡Activa CORS aquí!
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/jwt/security/autenticar/**").permitAll() // login sin token
-                .requestMatchers("/api/usuarios/**").permitAll() // registro sin token
+                .requestMatchers("/jwt/security/autenticar/**").permitAll()
+                .requestMatchers("/api/usuarios/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -52,7 +55,6 @@ public class SecurityConfig implements ISecurityConfig {
 
         return http.build();
     }
-
 
 	/*private RequestMatcher ignoreSpecificRequests() {
         return new OrRequestMatcher(
