@@ -1,6 +1,7 @@
 package co.edu.javeriana.tufinca.security.jwt.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import co.edu.javeriana.tufinca.DTOS.TokenDTO;
 import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
@@ -44,9 +46,9 @@ public class AutenticacionController {
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
-            throw new RuntimeException("Contraseña incorrecta");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         }
-
+        
         UsuarioDTOs dto = new UsuarioDTOs(
             usuario.getId(),
             usuario.getNombre(),
