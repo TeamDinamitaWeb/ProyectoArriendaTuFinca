@@ -1,7 +1,7 @@
 package co.edu.javeriana.tufinca.security.jwt.service;
 
 import java.security.Key;
-import java.util.Date;
+import java.util.*;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 
 @Service
 public class JWTTokenService {
@@ -31,13 +29,21 @@ public class JWTTokenService {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", usuario.getId());
+        claims.put("nombre", usuario.getNombre());
+        claims.put("apellido", usuario.getApellido());
+        claims.put("tipoUsuario", usuario.getTipoUsuario());
+
         return Jwts.builder()
-                .setSubject(usuario.getCorreo()) // solo correo como subject
+                .setClaims(claims) // ← Aquí van todos los datos adicionales
+                .setSubject(usuario.getCorreo()) // ← El subject sigue siendo el correo
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
+
 
     public String getCorreoDesdeToken(String jwtToken) {
         return decodificarToken(jwtToken).getSubject();
