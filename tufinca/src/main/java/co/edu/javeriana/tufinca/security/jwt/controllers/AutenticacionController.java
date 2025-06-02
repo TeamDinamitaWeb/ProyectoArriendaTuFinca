@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import co.edu.javeriana.tufinca.DTOS.LoginDTO;
 import co.edu.javeriana.tufinca.DTOS.TokenDTO;
 import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
 import co.edu.javeriana.tufinca.entities.Usuario;
@@ -40,17 +41,12 @@ public class AutenticacionController {
 
     @CrossOrigin
     @PostMapping(value = "/autenticar-correo-contrasena", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String autenticar(@RequestParam String correo, @RequestParam String contrasena) {
+    public TokenDTO autenticar(@RequestBody LoginDTO loginDTO) {
 
-        Usuario usuario = usuarioRepository.findByCorreo(correo)
+        Usuario usuario = usuarioRepository.findByCorreo(loginDTO.getCorreo())
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        System.out.println("Contraseña sin cifrar (input): " + contrasena);
-        System.out.println("Contraseña cifrada (BD): " + usuario.getContrasena());
-        System.out.println("¿Coinciden?: " + passwordEncoder.matches(contrasena, usuario.getContrasena()));
-
-
-        if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+        if (!passwordEncoder.matches(loginDTO.getContrasena(), usuario.getContrasena())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         }
 
@@ -63,7 +59,8 @@ public class AutenticacionController {
             usuario.getStatus()
         );
 
-        return jwtTokenService.generarToken(dto);
+        return new TokenDTO(jwtTokenService.generarToken(dto), dto);
     }
+
 
 }
