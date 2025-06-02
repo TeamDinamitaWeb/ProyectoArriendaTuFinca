@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import co.edu.javeriana.tufinca.DTOS.TokenDTO;
 import co.edu.javeriana.tufinca.DTOS.UsuarioDTOs;
 import co.edu.javeriana.tufinca.entities.Usuario;
+import co.edu.javeriana.tufinca.security.jwt.service.JWTTokenService;
 import co.edu.javeriana.tufinca.services.UsuarioService;
 
 @RestController
@@ -19,6 +21,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private JWTTokenService jwtTokenService;
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
@@ -52,9 +57,16 @@ public class UsuarioController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTOs> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
+    public ResponseEntity<TokenDTO> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         UsuarioDTOs usuarioActualizado = usuarioService.actualizarUsuario(id, usuario);
-        return usuarioActualizado != null ? ResponseEntity.ok(usuarioActualizado) : ResponseEntity.notFound().build();
+        
+        if (usuarioActualizado != null) {
+            // Generar nuevo token con los datos actualizados
+            String nuevoToken = jwtTokenService.generarToken(usuarioActualizado);
+            return ResponseEntity.ok(new TokenDTO(nuevoToken, usuarioActualizado));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
