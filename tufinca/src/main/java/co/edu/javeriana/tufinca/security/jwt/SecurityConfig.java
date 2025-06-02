@@ -43,7 +43,7 @@ public class SecurityConfig implements ISecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
         http
-            .cors(Customizer.withDefaults()) // 🔥 ¡Activa CORS aquí!
+            .cors(Customizer.withDefaults()) // ¡Activa CORS aquí!
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/jwt/security/autenticar/**").permitAll()
