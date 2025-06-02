@@ -12,28 +12,31 @@ import co.edu.javeriana.tufinca.services.SolicitudService;
 
 @RestController
 @RequestMapping("/api/solicitudes")
-@CrossOrigin(origins = "*")
 public class SolicitudController {
 
     @Autowired
     private SolicitudService solicitudService;
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public ResponseEntity<List<SolicitudDTO>> obtenerTodos() {
         return ResponseEntity.ok(solicitudService.obtenerTodos());
     }
     
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/all-including-deleted")
     public ResponseEntity<List<SolicitudDTO>> obtenerTodosInclusoEliminados() {
         return ResponseEntity.ok(solicitudService.obtenerTodosInclusoEliminados());
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudDTO> obtenerPorId(@PathVariable Long id) {
         SolicitudDTO solicitud = solicitudService.obtenerPorId(id);
         return solicitud != null ? ResponseEntity.ok(solicitud) : ResponseEntity.notFound().build();
     }
     
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping
     public ResponseEntity<?> crearSolicitud(@RequestBody SolicitudDTO solicitudDTO) {
         try {
@@ -47,6 +50,7 @@ public class SolicitudController {
         }
     }
     
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarSolicitud(@PathVariable Long id, @RequestBody SolicitudDTO solicitudDTO) {
         try {
@@ -62,12 +66,14 @@ public class SolicitudController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarSolicitud(@PathVariable Long id) {
         solicitudService.eliminarSolicitud(id);
         return ResponseEntity.noContent().build();
     }
     
+    @CrossOrigin(origins = "http://localhost:4200")
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

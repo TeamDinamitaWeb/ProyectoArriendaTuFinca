@@ -12,28 +12,31 @@ import co.edu.javeriana.tufinca.services.PropiedadService;
 
 @RestController
 @RequestMapping("/api/propiedades")
-@CrossOrigin(origins = "*")
 public class PropiedadController {
 
     @Autowired
     private PropiedadService propiedadService;
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public ResponseEntity<List<PropiedadDTO>> obtenerTodos() {
         return ResponseEntity.ok(propiedadService.obtenerTodos());
     }
     
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/all-including-deleted")
     public ResponseEntity<List<PropiedadDTO>> obtenerTodosInclusoEliminados() {
         return ResponseEntity.ok(propiedadService.obtenerTodosInclusoEliminados());
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<PropiedadDTO> obtenerPorId(@PathVariable Long id) {
         PropiedadDTO propiedad = propiedadService.obtenerPorId(id);
         return propiedad != null ? ResponseEntity.ok(propiedad) : ResponseEntity.notFound().build();
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping
     public ResponseEntity<?> crearPropiedad(@RequestBody PropiedadDTO propiedadDTO) {
         try {
@@ -47,6 +50,7 @@ public class PropiedadController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarPropiedad(@PathVariable Long id, @RequestBody PropiedadDTO propiedadDTO) {
         try {
@@ -62,6 +66,7 @@ public class PropiedadController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPropiedad(@PathVariable Long id) {
         return propiedadService.eliminarPropiedad(id)
@@ -69,6 +74,7 @@ public class PropiedadController {
                 : ResponseEntity.notFound().build();
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

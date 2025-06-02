@@ -12,25 +12,27 @@ import co.edu.javeriana.tufinca.services.PagoService;
 
 @RestController
 @RequestMapping("/api/pagos")
-@CrossOrigin(origins = "*")
 public class PagoController {
 
     @Autowired
     private PagoService pagoService;
 
     // Obtener todos los pagos activos
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
     public ResponseEntity<List<PagoDTO>> obtenerTodos() {
         return ResponseEntity.ok(pagoService.obtenerTodos());
     }
 
     // Obtener todos los pagos, incluyendo eliminados
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/all-including-deleted")
     public ResponseEntity<List<PagoDTO>> obtenerTodosInclusoEliminados() {
         return ResponseEntity.ok(pagoService.obtenerTodosInclusoEliminados());
     }
 
     // Obtener pago por ID
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<PagoDTO> obtenerPorId(@PathVariable Long id) {
         PagoDTO pago = pagoService.obtenerPorId(id);
@@ -38,6 +40,7 @@ public class PagoController {
     }
 
     // Crear nuevo pago
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping
     public ResponseEntity<?> crearPago(@RequestBody PagoDTO pagoDTO) {
         try {
@@ -52,6 +55,7 @@ public class PagoController {
     }
 
     // Actualizar pago
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarPago(@PathVariable Long id, @RequestBody PagoDTO pagoDTO) {
         try {
@@ -68,6 +72,7 @@ public class PagoController {
     }
 
     // Eliminar pago (borrado lógico)
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPago(@PathVariable Long id) {
         pagoService.eliminarPago(id);
@@ -75,6 +80,7 @@ public class PagoController {
     }
 
     // Manejador global de excepciones
+    @CrossOrigin(origins = "http://localhost:4200")
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
