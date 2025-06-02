@@ -2,12 +2,9 @@ package co.edu.javeriana.tufinca.security.jwt.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import co.edu.javeriana.tufinca.DTOS.LoginDTO;
@@ -32,11 +29,17 @@ public class AutenticacionController {
     private PasswordEncoder passwordEncoder;
 
     @CrossOrigin
-    @PostMapping("/autenticar")
+    @PostMapping(value = "/autenticar", produces = MediaType.APPLICATION_JSON_VALUE)
     public TokenDTO autenticar(@RequestBody LoginDTO loginDTO) {
         try {
+            System.out.println("Correo recibido: " + loginDTO.getCorreo());
+            System.out.println("Contraseña sin cifrar (input): " + loginDTO.getContrasena());
+
             Usuario usuario = usuarioRepository.findByCorreo(loginDTO.getCorreo())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            System.out.println("Contraseña cifrada (BD): " + usuario.getContrasena());
+            System.out.println("¿Coinciden?: " + passwordEncoder.matches(loginDTO.getContrasena(), usuario.getContrasena()));
 
             if (!passwordEncoder.matches(loginDTO.getContrasena(), usuario.getContrasena())) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
@@ -54,10 +57,12 @@ public class AutenticacionController {
             return new TokenDTO(jwtTokenService.generarToken(dto), dto);
 
         } catch (Exception e) {
-            e.printStackTrace(); // <-- Esto imprime el error real en consola
+            System.err.println("Error durante autenticación:");
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno");
         }
     }
+
 
 
     /*@CrossOrigin
