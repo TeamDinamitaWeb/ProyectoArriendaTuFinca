@@ -33,12 +33,35 @@ public class AutenticacionController {
     private PasswordEncoder passwordEncoder;
 
     @CrossOrigin
-    @PostMapping(value = "/autenticar", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TokenDTO autenticar(@RequestBody UsuarioDTOs usuarioDTO){
-        return new TokenDTO(jwtTokenService.generarToken(usuarioDTO), usuarioDTO);
+    @PostMapping("/autenticar")
+    public TokenDTO autenticar(@RequestBody LoginDTO loginDTO) {
+        try {
+            Usuario usuario = usuarioRepository.findByCorreo(loginDTO.getCorreo())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            if (!passwordEncoder.matches(loginDTO.getContrasena(), usuario.getContrasena())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
+            }
+
+            UsuarioDTOs dto = new UsuarioDTOs(
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getApellido(),
+                usuario.getCorreo(),
+                usuario.getTipoUsuario(),
+                usuario.getStatus()
+            );
+
+            return new TokenDTO(jwtTokenService.generarToken(dto), dto);
+
+        } catch (Exception e) {
+            e.printStackTrace(); // <-- Esto imprime el error real en consola
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno");
+        }
     }
 
-    @CrossOrigin
+
+    /*@CrossOrigin
     @PostMapping(value = "/autenticar-correo-contrasena", produces = MediaType.APPLICATION_JSON_VALUE)
     public TokenDTO autenticar(@RequestBody LoginDTO loginDTO) {
 
@@ -71,7 +94,5 @@ public class AutenticacionController {
         );
 
         return new TokenDTO(jwtTokenService.generarToken(dto), dto);
-    }
-
-
+    }*/
 }
