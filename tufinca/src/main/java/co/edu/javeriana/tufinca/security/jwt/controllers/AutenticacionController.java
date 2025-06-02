@@ -45,10 +45,15 @@ public class AutenticacionController {
         Usuario usuario = usuarioRepository.findByCorreo(correo)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        System.out.println("Contraseña sin cifrar (input): " + contrasena);
+        System.out.println("Contraseña cifrada (BD): " + usuario.getContrasena());
+        System.out.println("¿Coinciden?: " + passwordEncoder.matches(contrasena, usuario.getContrasena()));
+
+
         if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         }
-        
+
         UsuarioDTOs dto = new UsuarioDTOs(
             usuario.getId(),
             usuario.getNombre(),
