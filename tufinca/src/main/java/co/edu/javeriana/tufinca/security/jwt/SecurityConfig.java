@@ -3,6 +3,7 @@ package co.edu.javeriana.tufinca.security.jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 //import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -47,6 +48,7 @@ public class SecurityConfig implements ISecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/jwt/security/autenticar/**").permitAll()
                 .requestMatchers("/api/usuarios/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/propiedades/**").authenticated()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
