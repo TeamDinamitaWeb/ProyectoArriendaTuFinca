@@ -39,15 +39,21 @@ public class SecurityConfig implements ISecurityConfig {
 
 	@Override
     @Bean
-	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        
-    
-        http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).
-                                csrf(csrf -> csrf.ignoringRequestMatchers(ignoreSpecificRequests()));
-		return http.build();
-	}
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
-	private RequestMatcher ignoreSpecificRequests() {
+        http.csrf(csrf -> csrf.disable()) // más directo para pruebas
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/jwt/security/autenticar/**").permitAll() // login sin token
+                .requestMatchers("/api/usuarios/**").permitAll() // registro sin token
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+
+	/*private RequestMatcher ignoreSpecificRequests() {
         return new OrRequestMatcher(
             // new AntPathRequestMatcher("/indicadoressuim/api/autenticacion"),
             // new AntPathRequestMatcher("/indicadoressuim/api/peticion-mes"),
@@ -62,5 +68,5 @@ public class SecurityConfig implements ISecurityConfig {
             new AntPathRequestMatcher("/api/usuarios", HttpMethod.POST.name()),
             new AntPathRequestMatcher("/api/usuarios/crear", HttpMethod.POST.name())
         );
-    }
+    }*/
 }
