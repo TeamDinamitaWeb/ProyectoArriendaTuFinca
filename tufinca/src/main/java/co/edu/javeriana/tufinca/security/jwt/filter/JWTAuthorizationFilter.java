@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter{
 
-public static final String HEADER = "Authorization";
+    public static final String HEADER = "Authorization";
     public static final String PREFIX = "Bearer ";
 
     @Autowired
@@ -53,18 +53,16 @@ public static final String HEADER = "Authorization";
             if (tieneTokenValido(request)) {
                 Claims claims = getClaimsDesdeToken(request);
 
-                if (claims.get("authorities") != null) {
-                    String correo = claims.getSubject(); // o usa getCorreoDesdeToken si prefieres
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(correo);
+                String correo = claims.getSubject();
+                UserDetails userDetails = userDetailsService.loadUserByUsername(correo);
 
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(correo, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(correo, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                } else {
-                    SecurityContextHolder.clearContext();
-                }
+                System.out.println("TOKEN VÁLIDO: " + correo);
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
             } else {
                 SecurityContextHolder.clearContext();
             }
