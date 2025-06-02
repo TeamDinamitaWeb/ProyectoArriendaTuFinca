@@ -8,8 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.*;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import co.edu.javeriana.tufinca.security.jwt.CustomUserDetailsService;
@@ -26,56 +25,66 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 @Component
-@Service
 public class JWTAuthorizationFilter extends OncePerRequestFilter{
 
-
-    public static final String HEADER = "Authorization";
-	public static final String PREFIX = "Bearer ";
+public static final String HEADER = "Authorization";
+    public static final String PREFIX = "Bearer ";
 
     @Autowired
-	private CustomUserDetailsService userDetailsService;
+    private CustomUserDetailsService userDetailsService;
 
     @Autowired
     private JWTTokenService jwtTokenService;
 
-	@Override
-	protected void doFilterInternal( @NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) throws ServletException, IOException {
-		System.out.println( "-------->>>-------->>> Filtro"  );
-		System.out.println( "-------->>>-------->>> Filtro"  );
-		System.out.println( "-------->>>-------->>> Filtro"  );
-		System.out.println( "-------->>>-------->>> Filtro"  );
-		try {
-			if (existeJWTToken(request)) {
-				Claims claims = validarToken(request);
-				if (claims.get("authorities") != null) {
-					String username = getUsername(request);
-					UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-					UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, userDetails, null);
-					auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-           			SecurityContextHolder.getContext().setAuthentication(auth);
-				} else {
-					SecurityContextHolder.clearContext();
-				}
-			} else {
-				SecurityContextHolder.clearContext();
-			}
-			chain.doFilter(request, response);
-		} catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException e) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
-		}
-	}	
+    @Override
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain chain) throws ServletException, IOException {
 
-	private Claims validarToken(HttpServletRequest request) {
-		String jwtToken = request.getHeader(HEADER).replace(PREFIX, "");
-		return jwtTokenService.decodificarToken(jwtToken);
-	}
-	private String getUsername(HttpServletRequest request) {
-		String jwtToken = request.getHeader(HEADER).replace(PREFIX, "");
-		return jwtTokenService.getCorreoDesdeToken(jwtToken);
-	}
-	private boolean existeJWTToken(HttpServletRequest request) {
-		String authenticationHeader = request.getHeader(HEADER);
-		return !(authenticationHeader == null || !authenticationHeader.startsWith(PREFIX));
-	}
+        String path = request.getRequestURI();
+
+        //  Ignorar rutas públicas (login, registro, etc.)
+        if (path.startsWith("/jwt/security/autenticar")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        try {
+            if (tieneTokenValido(request)) {
+                Claims claims = getClaimsDesdeToken(request);
+
+                if (claims.get("authorities") != null) {
+                    String correo = claims.getSubject(); // o usa getCorreoDesdeToken si prefieres
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(correo);
+
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(correo, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    SecurityContextHolder.clearContext();
+                }
+            } else {
+                SecurityContextHolder.clearContext();
+            }
+
+            chain.doFilter(request, response);
+
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException e) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token inválido o expirado: " + e.getMessage());
+        }
+    }
+
+    //  Helpers
+
+    private boolean tieneTokenValido(HttpServletRequest request) {
+        String header = request.getHeader(HEADER);
+        return header != null && header.startsWith(PREFIX);
+    }
+
+    private Claims getClaimsDesdeToken(HttpServletRequest request) {
+        String token = request.getHeader(HEADER).replace(PREFIX, "");
+        return jwtTokenService.decodificarToken(token);
+    }
 }
