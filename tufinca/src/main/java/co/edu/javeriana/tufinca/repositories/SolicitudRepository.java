@@ -11,4 +11,6 @@ public interface SolicitudRepository extends JpaRepository<SolicitudArriendo, Lo
     // Custom query to find all solicitudes including deleted ones (bypassing @Where)
     @Query(value = "SELECT * FROM solicitud_arriendo", nativeQuery = true)
     List<SolicitudArriendo> findAllIncludingDeleted();
+
+    List<SolicitudArriendo> findByPropiedadUsuarioId(Long usuarioId);
 }

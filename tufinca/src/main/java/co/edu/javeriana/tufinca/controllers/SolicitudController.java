@@ -30,6 +30,13 @@ public class SolicitudController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/por-arrendador/{id}")
+    public ResponseEntity<List<SolicitudDTO>> obtenerSolicitudesPorArrendador(@PathVariable Long id) {
+        List<SolicitudDTO> solicitudes = solicitudService.obtenerSolicitudesPorArrendador(id);
+        return ResponseEntity.ok(solicitudes);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudDTO> obtenerPorId(@PathVariable Long id) {
         SolicitudDTO solicitud = solicitudService.obtenerPorId(id);
