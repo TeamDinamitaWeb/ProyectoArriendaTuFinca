@@ -49,6 +49,7 @@ public class SecurityConfig implements ISecurityConfig {
                 .requestMatchers("/jwt/security/autenticar/**").permitAll()
                 .requestMatchers("/api/usuarios/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/propiedades/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/propiedades/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
