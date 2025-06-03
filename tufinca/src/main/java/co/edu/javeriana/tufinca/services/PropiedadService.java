@@ -120,7 +120,6 @@ public class PropiedadService {
         return null;
     }
 
-
     public boolean eliminarPropiedad(Long id) {
         if (propiedadRepository.existsById(id)) {
             propiedadRepository.deleteById(id);

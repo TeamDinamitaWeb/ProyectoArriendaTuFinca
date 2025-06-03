@@ -51,6 +51,11 @@ public class SecurityConfig implements ISecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/propiedades/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/propiedades/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/propiedades/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/propiedades/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/solicitudes").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/solicitudes").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/solicitudes/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/solicitudes/**").authenticated()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
