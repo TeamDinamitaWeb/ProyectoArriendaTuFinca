@@ -42,6 +42,11 @@ public class SolicitudController {
         SolicitudDTO solicitud = solicitudService.obtenerPorId(id);
         return solicitud != null ? ResponseEntity.ok(solicitud) : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/por-arrendatario/{id}")
+    public ResponseEntity<List<SolicitudDTO>> obtenerPorArrendatario(@PathVariable Long id) {
+        return ResponseEntity.ok(solicitudService.obtenerPorArrendatario(id));
+    }
     
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping

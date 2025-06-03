@@ -136,6 +136,10 @@ public class SolicitudService {
         return entidades.stream().map(this::convertToDTO).toList();
     }
 
+    public List<SolicitudDTO> obtenerPorArrendatario(Long idArrendatario) {
+        List<SolicitudArriendo> solicitudes = solicitudRepository.findByArrendatarioId(idArrendatario);
+        return solicitudes.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
     
     // Obtener todas las solicitudes incluyendo eliminadas
     public List<SolicitudDTO> obtenerTodosInclusoEliminados() {

@@ -13,4 +13,5 @@ public interface SolicitudRepository extends JpaRepository<SolicitudArriendo, Lo
     List<SolicitudArriendo> findAllIncludingDeleted();
 
     List<SolicitudArriendo> findByPropiedadUsuarioId(Long usuarioId);
+    List<SolicitudArriendo> findByArrendatarioId(Long idArrendatario);
 }
