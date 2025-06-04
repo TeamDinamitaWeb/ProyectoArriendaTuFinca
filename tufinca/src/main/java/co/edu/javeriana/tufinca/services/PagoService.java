@@ -13,7 +13,9 @@ import co.edu.javeriana.tufinca.DTOS.PagoDTO;
 import co.edu.javeriana.tufinca.entities.Pago;
 import co.edu.javeriana.tufinca.entities.SolicitudArriendo;
 import co.edu.javeriana.tufinca.repositories.PagoRepository;
+import co.edu.javeriana.tufinca.repositories.PropiedadRepository;
 import co.edu.javeriana.tufinca.repositories.SolicitudRepository;
+import co.edu.javeriana.tufinca.repositories.UsuarioRepository;
 
 @Service
 public class PagoService {
@@ -23,6 +25,12 @@ public class PagoService {
     
     @Autowired
     private SolicitudRepository solicitudRepository;
+
+    @Autowired
+    private PropiedadRepository propiedadRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     // Convertir Entidad -> DTO
     private PagoDTO convertToDTO(Pago pago) {
@@ -47,56 +55,71 @@ public class PagoService {
     private Pago convertToEntity(PagoDTO pagoDTO) {
         Pago pago = new Pago();
         pago.setId(pagoDTO.getId());
-        
-        // Buscar y asignar la solicitud por ID si está disponible
+
+        // Validar solicitud y buscarla
         if (pagoDTO.getSolicitudId() != null) {
-            Optional<SolicitudArriendo> solicitud = solicitudRepository.findById(pagoDTO.getSolicitudId());
-            if (solicitud.isPresent()) {
-                pago.setSolicitud(solicitud.get());
+            Optional<SolicitudArriendo> solicitudOpt = solicitudRepository.findById(pagoDTO.getSolicitudId());
+            if (solicitudOpt.isPresent()) {
+                SolicitudArriendo solicitud = solicitudOpt.get();
+                pago.setSolicitud(solicitud);
+
+                // Asignar propiedad desde la solicitud
+                if (solicitud.getPropiedad() != null) {
+                    pago.setPropiedad(solicitud.getPropiedad());
+                } else {
+                    throw new IllegalArgumentException("La solicitud no tiene una propiedad asociada.");
+                }
+
+                // Asignar usuario (arrendatario) desde la solicitud
+                if (solicitud.getArrendatario() != null) {
+                    pago.setUsuario(solicitud.getArrendatario());
+                }
+
             } else {
-                throw new IllegalArgumentException("La solicitud con ID " + pagoDTO.getSolicitudId() + " no existe");
+                throw new IllegalArgumentException("La solicitud con ID " + pagoDTO.getSolicitudId() + " no existe.");
             }
         } else {
-            throw new IllegalArgumentException("El ID de solicitud es obligatorio para crear un pago");
+            throw new IllegalArgumentException("El ID de solicitud es obligatorio para crear un pago.");
         }
-        
+
         // Validar y establecer valor
-        if (pagoDTO.getValor().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El valor del pago debe ser mayor que cero");
+        if (pagoDTO.getValor() == null || pagoDTO.getValor().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("El valor del pago debe ser mayor que cero.");
         }
-        pago.setValor((pagoDTO.getValor()));
-        
-        // Validar banco
+        pago.setValor(pagoDTO.getValor());
+
+        // Validar y establecer banco
         if (pagoDTO.getBanco() == null || pagoDTO.getBanco().trim().isEmpty()) {
-            throw new IllegalArgumentException("El banco es obligatorio");
+            throw new IllegalArgumentException("El banco es obligatorio.");
         }
         pago.setBanco(pagoDTO.getBanco());
-        
-        // Validar número de cuenta
+
+        // Validar y establecer número de cuenta
         if (pagoDTO.getNumeroCuenta() == null || pagoDTO.getNumeroCuenta().trim().isEmpty()) {
-            throw new IllegalArgumentException("El número de cuenta es obligatorio");
+            throw new IllegalArgumentException("El número de cuenta es obligatorio.");
         }
         pago.setNumeroCuenta(pagoDTO.getNumeroCuenta());
-        
-        // Fecha de pago
-        if (pagoDTO.getFechaPago() == null) {
-            pago.setFechaPago(LocalDateTime.now());
-        } else {
+
+        // Fecha de pago (usar actual si no viene del frontend)
+        if (pagoDTO.getFechaPago() != null) {
             pago.setFechaPago(pagoDTO.getFechaPago());
+        } else {
+            pago.setFechaPago(LocalDateTime.now());
         }
-        
-        // Manejo de enum: si no hay estado o es inválido, usar el valor por defecto
+
+        // Estado del pago
         if (pagoDTO.getEstado() != null) {
             pago.setEstado(pagoDTO.getEstado());
         } else {
             pago.setEstado(Pago.EstadoPago.PENDIENTE);
         }
 
-        // Establecer status para borrado lógico (0 por defecto)
+        // Borrado lógico
         pago.setStatus(pagoDTO.getStatus() != null ? pagoDTO.getStatus() : 0);
-        
+
         return pago;
     }
+
 
     public List<PagoDTO> obtenerTodos() {
         return pagoRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
