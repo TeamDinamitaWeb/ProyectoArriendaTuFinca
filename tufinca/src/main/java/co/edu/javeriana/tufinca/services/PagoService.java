@@ -61,7 +61,17 @@ public class PagoService {
             Optional<SolicitudArriendo> solicitudOpt = solicitudRepository.findById(pagoDTO.getSolicitudId());
             if (solicitudOpt.isPresent()) {
                 SolicitudArriendo solicitud = solicitudOpt.get();
+                
+                // 🔍 Verificación por consola
+                System.out.println("🔎 Solicitud cargada desde BD:");
+                System.out.println("ID: " + solicitud.getId());
+                System.out.println("Estado: " + solicitud.getEstado());
+                System.out.println("Arrendatario ID: " + (solicitud.getArrendatario() != null ? solicitud.getArrendatario().getId() : "null"));
+                System.out.println("Propiedad ID: " + (solicitud.getPropiedad() != null ? solicitud.getPropiedad().getId() : "null"));
+                System.out.println("Status: " + solicitud.getStatus());
+
                 pago.setSolicitud(solicitud);
+
 
                 // Asignar propiedad desde la solicitud
                 if (solicitud.getPropiedad() != null) {
