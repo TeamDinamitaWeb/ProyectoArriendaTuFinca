@@ -70,8 +70,7 @@ public class PagoService {
             if (solicitudOpt.isPresent()) {
                 SolicitudArriendo solicitud = solicitudOpt.get();
 
-                // 🔥 Reasociar la entidad al contexto persistente
-                solicitud = entityManager.merge(solicitud);
+                pago.setSolicitud(solicitud);
 
                 pago.setSolicitud(solicitud);
 
