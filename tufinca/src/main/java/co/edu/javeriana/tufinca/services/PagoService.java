@@ -63,9 +63,13 @@ public class PagoService {
             Optional<SolicitudArriendo> solicitudOpt = solicitudRepository.findById(pagoDTO.getSolicitudId());
             if (solicitudOpt.isPresent()) {
                 SolicitudArriendo solicitud = solicitudOpt.get();
-                pago.setSolicitud(solicitud);
 
-                // 🔁 Cargar propiedad desde DB
+                // ⚠️ Asignar solicitud administrada directamente desde DB
+                SolicitudArriendo solicitudManaged = solicitudRepository.findById(solicitud.getId())
+                        .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+                pago.setSolicitud(solicitudManaged);
+
+                // Cargar propiedad
                 Propiedad propiedad = solicitud.getPropiedad();
                 if (propiedad != null) {
                     propiedad = propiedadRepository.findById(propiedad.getId())
@@ -73,7 +77,7 @@ public class PagoService {
                     pago.setPropiedad(propiedad);
                 }
 
-                // 🔁 Cargar usuario desde DB
+                // Cargar usuario
                 Usuario usuario = solicitud.getArrendatario();
                 if (usuario != null) {
                     usuario = usuarioRepository.findById(usuario.getId())
