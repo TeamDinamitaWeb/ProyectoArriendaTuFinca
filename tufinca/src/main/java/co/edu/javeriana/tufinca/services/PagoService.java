@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import co.edu.javeriana.tufinca.DTOS.PagoDTO;
 import co.edu.javeriana.tufinca.entities.Pago;
+import co.edu.javeriana.tufinca.entities.Propiedad;
 import co.edu.javeriana.tufinca.entities.SolicitudArriendo;
+import co.edu.javeriana.tufinca.entities.Usuario;
 import co.edu.javeriana.tufinca.repositories.PagoRepository;
 import co.edu.javeriana.tufinca.repositories.PropiedadRepository;
 import co.edu.javeriana.tufinca.repositories.SolicitudRepository;
@@ -61,28 +63,22 @@ public class PagoService {
             Optional<SolicitudArriendo> solicitudOpt = solicitudRepository.findById(pagoDTO.getSolicitudId());
             if (solicitudOpt.isPresent()) {
                 SolicitudArriendo solicitud = solicitudOpt.get();
-                
-                // 🔍 Verificación por consola
-                System.out.println("🔎 Solicitud cargada desde BD:");
-                System.out.println("ID: " + solicitud.getId());
-                System.out.println("Estado: " + solicitud.getEstado());
-                System.out.println("Arrendatario ID: " + (solicitud.getArrendatario() != null ? solicitud.getArrendatario().getId() : "null"));
-                System.out.println("Propiedad ID: " + (solicitud.getPropiedad() != null ? solicitud.getPropiedad().getId() : "null"));
-                System.out.println("Status: " + solicitud.getStatus());
-
                 pago.setSolicitud(solicitud);
 
-
-                // Asignar propiedad desde la solicitud
-                if (solicitud.getPropiedad() != null) {
-                    pago.setPropiedad(solicitud.getPropiedad());
-                } else {
-                    throw new IllegalArgumentException("La solicitud no tiene una propiedad asociada.");
+                // 🔁 Cargar propiedad desde DB
+                Propiedad propiedad = solicitud.getPropiedad();
+                if (propiedad != null) {
+                    propiedad = propiedadRepository.findById(propiedad.getId())
+                            .orElseThrow(() -> new RuntimeException("Propiedad no encontrada"));
+                    pago.setPropiedad(propiedad);
                 }
 
-                // Asignar usuario (arrendatario) desde la solicitud
-                if (solicitud.getArrendatario() != null) {
-                    pago.setUsuario(solicitud.getArrendatario());
+                // 🔁 Cargar usuario desde DB
+                Usuario usuario = solicitud.getArrendatario();
+                if (usuario != null) {
+                    usuario = usuarioRepository.findById(usuario.getId())
+                            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                    pago.setUsuario(usuario);
                 }
 
             } else {
@@ -129,6 +125,7 @@ public class PagoService {
 
         return pago;
     }
+
 
 
     public List<PagoDTO> obtenerTodos() {
