@@ -52,6 +52,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter{
         try {
             if (tieneTokenValido(request)) {
                 Claims claims = getClaimsDesdeToken(request);
+                System.out.println("CLAIMS DEL TOKEN: " + claims);
 
                 String correo = claims.getSubject();
                 UserDetails userDetails = userDetailsService.loadUserByUsername(correo);

@@ -8,15 +8,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import co.edu.javeriana.tufinca.DTOS.RatingDTO;
+import co.edu.javeriana.tufinca.entities.SolicitudArriendo.EstadoSolicitud;
+import co.edu.javeriana.tufinca.repositories.SolicitudRepository;
 import co.edu.javeriana.tufinca.services.RatingService;
 
 @RestController
 @RequestMapping("/api/ratings")
-@CrossOrigin(origins = "*")
 public class RatingController {
 
     @Autowired
     private RatingService ratingService;
+
+    @Autowired
+    private SolicitudRepository solicitudRepository;
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping
@@ -42,7 +46,14 @@ public class RatingController {
     public ResponseEntity<?> crearRating(@RequestBody RatingDTO ratingDTO) {
         try {
             RatingDTO creada = ratingService.crearRating(ratingDTO);
+
+            solicitudRepository.findById(ratingDTO.getSolicitudId()).ifPresent(solicitud -> {
+                solicitud.setEstado(EstadoSolicitud.CALIFICADA);
+                solicitudRepository.save(solicitud);
+            });
+
             return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Error en datos de entrada: " + e.getMessage());
         } catch (Exception e) {

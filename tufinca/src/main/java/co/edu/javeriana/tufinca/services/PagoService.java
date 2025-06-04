@@ -11,13 +11,14 @@ import org.springframework.stereotype.Service;
 
 import co.edu.javeriana.tufinca.DTOS.PagoDTO;
 import co.edu.javeriana.tufinca.entities.Pago;
-import co.edu.javeriana.tufinca.entities.Propiedad;
+// import co.edu.javeriana.tufinca.entities.Propiedad;
 import co.edu.javeriana.tufinca.entities.SolicitudArriendo;
-import co.edu.javeriana.tufinca.entities.Usuario;
+import co.edu.javeriana.tufinca.entities.SolicitudArriendo.EstadoSolicitud;
+// import co.edu.javeriana.tufinca.entities.Usuario;
 import co.edu.javeriana.tufinca.repositories.PagoRepository;
-import co.edu.javeriana.tufinca.repositories.PropiedadRepository;
+// import co.edu.javeriana.tufinca.repositories.PropiedadRepository;
 import co.edu.javeriana.tufinca.repositories.SolicitudRepository;
-import co.edu.javeriana.tufinca.repositories.UsuarioRepository;
+// import co.edu.javeriana.tufinca.repositories.UsuarioRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -30,11 +31,11 @@ public class PagoService {
     @Autowired
     private SolicitudRepository solicitudRepository;
 
-    @Autowired
-    private PropiedadRepository propiedadRepository;
+    // @Autowired
+    // private PropiedadRepository propiedadRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    // @Autowired
+    // private UsuarioRepository usuarioRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -152,6 +153,20 @@ public class PagoService {
     public PagoDTO crearPago(PagoDTO pagoDTO) {
         try {
             Pago pago = convertToEntity(pagoDTO);
+
+            // Buscar la solicitud relacionada
+            Optional<SolicitudArriendo> solicitudOpt = solicitudRepository.findById(pagoDTO.getSolicitudId());
+            if (solicitudOpt.isPresent()) {
+                SolicitudArriendo solicitud = solicitudOpt.get();
+
+                // Cambiar estado a PAGADA
+                solicitud.setEstado(EstadoSolicitud.PAGADA);
+                solicitudRepository.save(solicitud); // guardar el nuevo estado
+            } else {
+                throw new IllegalArgumentException("No se encontró la solicitud con ID: " + pagoDTO.getSolicitudId());
+            }
+
+            // Guardar el pago como de costumbre
             return convertToDTO(pagoRepository.save(pago));
         } catch (IllegalArgumentException e) {
             throw e;
