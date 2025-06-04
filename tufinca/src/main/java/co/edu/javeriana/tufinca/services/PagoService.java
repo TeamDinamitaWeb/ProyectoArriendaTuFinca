@@ -18,6 +18,8 @@ import co.edu.javeriana.tufinca.repositories.PagoRepository;
 import co.edu.javeriana.tufinca.repositories.PropiedadRepository;
 import co.edu.javeriana.tufinca.repositories.SolicitudRepository;
 import co.edu.javeriana.tufinca.repositories.UsuarioRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class PagoService {
@@ -33,6 +35,10 @@ public class PagoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     // Convertir Entidad -> DTO
     private PagoDTO convertToDTO(Pago pago) {
@@ -64,27 +70,22 @@ public class PagoService {
             if (solicitudOpt.isPresent()) {
                 SolicitudArriendo solicitud = solicitudOpt.get();
 
-                // ⚠️ Asignar solicitud administrada directamente desde DB
-                SolicitudArriendo solicitudManaged = solicitudRepository.findById(solicitud.getId())
-                        .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
-                pago.setSolicitud(solicitudManaged);
+                // 🔥 Reasociar la entidad al contexto persistente
+                solicitud = entityManager.merge(solicitud);
 
-                // Cargar propiedad
-                Propiedad propiedad = solicitud.getPropiedad();
-                if (propiedad != null) {
-                    propiedad = propiedadRepository.findById(propiedad.getId())
-                            .orElseThrow(() -> new RuntimeException("Propiedad no encontrada"));
-                    pago.setPropiedad(propiedad);
+                pago.setSolicitud(solicitud);
+
+                // Asignar propiedad desde la solicitud
+                if (solicitud.getPropiedad() != null) {
+                    pago.setPropiedad(solicitud.getPropiedad());
+                } else {
+                    throw new IllegalArgumentException("La solicitud no tiene una propiedad asociada.");
                 }
 
-                // Cargar usuario
-                Usuario usuario = solicitud.getArrendatario();
-                if (usuario != null) {
-                    usuario = usuarioRepository.findById(usuario.getId())
-                            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-                    pago.setUsuario(usuario);
+                // Asignar usuario desde la solicitud
+                if (solicitud.getArrendatario() != null) {
+                    pago.setUsuario(solicitud.getArrendatario());
                 }
-
             } else {
                 throw new IllegalArgumentException("La solicitud con ID " + pagoDTO.getSolicitudId() + " no existe.");
             }
