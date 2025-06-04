@@ -51,8 +51,8 @@ public class Usuario implements Serializable {
     // @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     // private List<SolicitudArriendo> solicitudes;
 
-    @OneToMany(mappedBy = "arrendatario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SolicitudArriendo> solicitudes;
+    // @OneToMany(mappedBy = "arrendatario", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<SolicitudArriendo> solicitudes;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pago> pagos;
