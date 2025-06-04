@@ -36,10 +36,6 @@ public class SolicitudArriendo implements Serializable {
     @JoinColumn(name = "propiedad_id", nullable = false)
     private Propiedad propiedad;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario") 
-    private Usuario usuario;
-
     @Column(nullable = false)
     private LocalDate fechaInicio;
 
