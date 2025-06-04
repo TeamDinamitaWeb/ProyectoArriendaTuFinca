@@ -1,6 +1,7 @@
 package co.edu.javeriana.tufinca.services;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,28 +32,43 @@ public class SolicitudService {
     private SolicitudDTO convertToDTO(SolicitudArriendo solicitud) {
         SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setId(solicitud.getId());
-        
+
         // Establecer los IDs de relaciones
         if (solicitud.getArrendatario() != null) {
             solicitudDTO.setArrendatarioId(solicitud.getArrendatario().getId());
-            solicitudDTO.setNombreSolicitante(solicitud.getArrendatario().getNombre() + " " + solicitud.getArrendatario().getApellido());
+            solicitudDTO.setNombreSolicitante(
+                solicitud.getArrendatario().getNombre() + " " + solicitud.getArrendatario().getApellido()
+            );
         }
-        
+
         if (solicitud.getPropiedad() != null) {
             solicitudDTO.setPropiedadId(solicitud.getPropiedad().getId());
             solicitudDTO.setNombrePropiedad("Propiedad " + solicitud.getPropiedad().getId());
+
+            // Calcular el valor total de la solicitud
+            if (solicitud.getFechaInicio() != null && solicitud.getFechaFin() != null) {
+                long noches = ChronoUnit.DAYS.between(solicitud.getFechaInicio(), solicitud.getFechaFin());
+                Double precioPorNoche = solicitud.getPropiedad().getPrecioPorNoche();
+                if (precioPorNoche != null && noches > 0) {
+                    solicitudDTO.setValor(precioPorNoche * noches);
+                } else {
+                    solicitudDTO.setValor(0.0);
+                }
+            } else {
+                solicitudDTO.setValor(0.0);
+            }
         }
-        
+
         solicitudDTO.setFechaSolicitud(solicitud.getFechaSolicitud());
-        solicitudDTO.setFechaInicio(LocalDateTime.from(solicitud.getFechaInicio().atStartOfDay()));
-        solicitudDTO.setFechaFin(LocalDateTime.from(solicitud.getFechaFin().atStartOfDay()));
+        solicitudDTO.setFechaInicio(solicitud.getFechaInicio() != null ? solicitud.getFechaInicio().atStartOfDay() : null);
+        solicitudDTO.setFechaFin(solicitud.getFechaFin() != null ? solicitud.getFechaFin().atStartOfDay() : null);
         solicitudDTO.setCantidadPersonas(solicitud.getCantidadPersonas());
-        // Aquí se necesitaría calcular el valor basado en la propiedad o alguna lógica de negocio
-        solicitudDTO.setValor(0.0); // Este valor debería calcularse según la lógica del negocio
         solicitudDTO.setEstado(solicitud.getEstado());
         solicitudDTO.setStatus(solicitud.getStatus());
+
         return solicitudDTO;
     }
+
 
     private SolicitudArriendo convertToEntity(SolicitudDTO solicitudDTO) {
         SolicitudArriendo solicitud = new SolicitudArriendo();
